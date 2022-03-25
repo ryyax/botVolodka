@@ -107,7 +107,7 @@ return `📍<b>У Львові</b> сьогодні чудова погода.
 bot.hears('1000',ctx=>{
     let chat_id = ctx.message.chat.id;
     if(chat_id.toString().slice(0,1)==='-'){
-        chat_id = '_' + chat.toString().slice(1,chat.length);
+        chat_id = '_' + chat_id.toString().slice(1,chat_id.length);
     }
     let database_identifier = 'counting_for_dead_insides' + chat_id;
     async function fn(){    
