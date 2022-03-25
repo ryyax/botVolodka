@@ -1,0 +1,21 @@
+{
+  "name": "botvolodka",
+  "version": "1.0.0",
+  "description": "",
+  "main": "bot.js",
+  "engines": {
+    "node": "16.14.2",
+    "npm": "8.5.0"
+  },
+  "scripts": {
+    "start": "node bot.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.0.0",
+    "http": "^0.0.1-security",
+    "telegraf": "^3.39.0"
+  }
+}
