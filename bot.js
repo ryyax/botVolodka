@@ -4,12 +4,8 @@ const http = require('http')
 const bot = new Telegraf(process.env.BOT_TOKEN); 
 
 // database(temp)
-bot.context.db = {
-    countingForDeadInsides: 0
-}
-let coords = {
-    lon: 0,
-    lat: 0
+db = {
+   
 }
 
 // chats
@@ -37,8 +33,9 @@ let onesixteen = function (){
 let morningAnnouncement = function(){
     setInterval(()=>{
         let date = new Date();
-        if(date.getUTCHours() === 21 && date.getUTCMinutes() === 15){
-            bot.telegram.sendMessage(chatpasta,morningMessage(date),{parse_mode:'HTML'})            
+        if(date.getUTCHours() === 7 && date.getUTCMinutes() === 0){
+            bot.telegram.sendMessage(chatpasta,morningMessage(date),{parse_mode:'HTML'}) 
+            bot.telegram.sendMessage(chatpasta,daily_weather(date),{parse_mode:'HTML'})           
         }
     },1000)
 }();
@@ -82,38 +79,48 @@ function getWeather(city_name, country_code){
 }
 function getTodayWeather(){
     getWeather('Lviv','UKR').then(data=>{
-        let today = {
-            temp: Math.round(data.current.temp),
+        return today = {
+            temperature: Math.round(data.current.temp),
             feels_like: Math.round(data.current.feels_like),
-            temp_max: Math.round(data.daily[0].temp.max),
-            temp_min: Math.round(data.daily[0].temp.min),
+            temperature_max: Math.round(data.daily[0].temp.max),
+            temperature_min: Math.round(data.daily[0].temp.min),
+            weather_conditions: data.current.weather[0].description,
         };
-        bot.telegram.sendMessage(ryyax,today)
     })
 }
-getTodayWeather();
 
 // messages
-let morningMessage = (date) => {
-return `<b>Доброго вечора, товариство!</b>
+let morningMessage = date => {
+return `<b>Доброго ранку, товариство!</b>
 Сьогодні <b>${Math.floor((date.getTime()-new Date('February 24, 2022 03:40:00'))/1000/60/60/24)}-й</b> день, як <span class="tg-spoiler">хуйло</span> напало на нас
 Але ми тримаємось і будем триматись, <u>бо ми українці!</u>
 <b><i>Слава Україні!</i></b>`
 }
+let daily_weather = () => {
+    let weather = getWeather();
+return `📍<b>У Львові</b> сьогодні чудова погода.
+☀️<i>${weather.temperature}°</i> градусів, <i>${weather.weather_conditions}</i>, максимум сьогодні буде <i>${weather.temperature_max}°</i>, мінімум <i>${weather.temperature_min}°</i>. 
+🙌<i>Всім прекрасного дня!</i>`
+}
 
 // bot hears
 bot.hears('1000',ctx=>{
-    async function fn(){
+    let chat_id = ctx.message.chat.id;
+    if(chat_id.toString().slice(0,1)==='-'){
+        chat_id = '_' + chat.toString().slice(1,chat.length);
+    }
+    let database_identifier = 'counting_for_dead_insides' + chat_id;
+    async function fn(){    
         for(let i=993;i>0;i=i-7){
             ctx.reply(i);
             await sleep(3000);
         }
         ctx.reply('DEAD INSIDE!!!!!!!')
-        bot.context.db.countingForDeadInsides = 0;
+        db[database_identifier] = 0;
     }
-    if(bot.context.db.countingForDeadInsides === 0){
+    if(db[database_identifier] != 1){
         fn();
-        bot.context.db.countingForDeadInsides = 1;
+        db[database_identifier] = 1;
     } else{
         reply(ctx,'я можу рахувати тільки 1 раз одночасно(аби не було спаму, так то можу і більше)')    
     }
@@ -137,7 +144,7 @@ bot.on('voice', ctx => reply(ctx,'блять в тебе шо букви пла�
 
 // test
 bot.hears('test',ctx=>{
-    ctx.reply('1')
+    ctx.reply(ctx.message)
 })
 
 
