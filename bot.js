@@ -22,7 +22,7 @@ function reply(ctx,text){
     ctx.reply(text,{reply_to_message_id:ctx.message.message_id})
 }
 
-functions
+// functions
 let onesixteen = function (){
     setInterval(()=>{
         let date = new Date();
