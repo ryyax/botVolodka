@@ -22,24 +22,24 @@ function reply(ctx,text){
     ctx.reply(text,{reply_to_message_id:ctx.message.message_id})
 }
 
-// functions
-// let onesixteen = function (){
-//     setInterval(()=>{
-//         let date = new Date();
-//         if(date.getUTCHours() === 23 && date.getUTCMinutes() === 16){
-//             bot.telegram.sendMessage(chatpasta,'1:16');
-//         }
-//     }, 60000)
-// }();
-// let morningAnnouncement = function(){
-//     setInterval(()=>{
-//         let date = new Date();
-//         if(date.getUTCHours() === 7 && date.getUTCMinutes() === 0){
-//             bot.telegram.sendMessage(chatpasta,morningMessage(date),{parse_mode:'HTML'}) 
-//             daily_weather_lviv(chatpasta)           
-//         }
-//     },60000)
-// }();
+functions
+let onesixteen = function (){
+    setInterval(()=>{
+        let date = new Date();
+        if(date.getUTCHours() === 23 && date.getUTCMinutes() === 16){
+            bot.telegram.sendMessage(chatpasta,'1:16');
+        }
+    }, 60000)
+}();
+let morningAnnouncement = function(){
+    setInterval(()=>{
+        let date = new Date();
+        if(date.getUTCHours() === 7 && date.getUTCMinutes() === 0){
+            bot.telegram.sendMessage(chatpasta,morningMessage(date),{parse_mode:'HTML'}) 
+            daily_weather_lviv(chatpasta)           
+        }
+    },60000)
+}();
 function getCoords(city_name, country_code){
     return new Promise((resolve)=>{
         http.get(`http://api.openweathermap.org/geo/1.0/direct?q=${city_name},${country_code}&limit=1&appid=${process.env.WEATHER_API_KEY}`, res=>{
