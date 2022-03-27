@@ -62,12 +62,13 @@ function getWeather(city_name, country_code){
     return new Promise((resolve)=>{
         getCoords(city_name, country_code).then(data => {
             let request = http.get(`http://api.openweathermap.org/data/2.5/onecall?lat=${data.lat}&lon=${data.lon}&appid=${process.env.WEATHER_API_KEY}&units=metric&lang=ua`,res=>{
-                let data = '';
-                res.on('data', chunk => data+=chunk);
+                let weather_data = '';
+                res.on('data', chunk => weather_data+=chunk);
                 res.on('end',()=>{
                     try{
-                        data = JSON.parse(data);
-                        resolve(data);
+                        weather_data = JSON.parse(weather_data);
+                        weather_data.city_names_in_different_names = data.local_names;
+                        resolve(weather_data);
                     }catch(e){
                         bot.telegram.sendMessage(ryyax,`data weather error: ${e.message}`)
                     }
@@ -86,7 +87,10 @@ function getTodayWeather(city_name, country_code){
                 feels_like: Math.round(data.current.feels_like),
                 temperature_max: Math.round(data.daily[0].temp.max),
                 temperature_min: Math.round(data.daily[0].temp.min),
-                weather_conditions: data.current.weather[0].description,
+                weather_conditions_description: data.current.weather[0].description,
+                weather_conditions_id: data.current.weather[0].id,
+                city_name_language_ukrainian: data.city_names_in_different_names.uk,
+
             })
         })
     })
@@ -101,9 +105,68 @@ return `<b>Доброго ранку, товариство!</b>
 }
 let daily_weather_lviv = (chat) => {
     getTodayWeather('Lviv','UKR').then(weather=>{
-bot.telegram.sendMessage(chat,`📍<b>У Львові</b> сьогодні чудова погода.
-☀️<i>${weather.temperature}°</i> градусів, <i>${weather.weather_conditions}</i>, максимум сьогодні буде <i>${weather.temperature_max}°</i>, мінімум <i>${weather.temperature_min}°</i>. 
-🙌<i>Всім прекрасного дня!</i>`,{parse_mode:'HTML'})
+        let daily_weather_message = '1';
+        let weather_conditions_icon
+        let personal_message_patterns = {
+            0: 'Ранкова програма:',
+            1: 'А зараз прогноз погоди.',
+            2: 'Прокидайся і будь в курсі погоди',
+            3: 'Починається новий день, отож маю, що вам розказати:',
+        };
+        personal_message = personal_message_patterns[Math.floor(Math.random()*4)];
+        if(weather.weather_conditions_id >= 800){
+            switch(weather.weather_conditions_id){
+                case 800:
+                    weather_conditions_icon = '☀️';
+                    break;
+                case 801:
+                    weather_conditions_icon = '🌤';
+                    break;
+                case 802:
+                    weather_conditions_icon = '⛅️';
+                    break;
+                case 803:
+                    weather_conditions_icon = '🌥';
+                    break;
+                case 804:
+                    weather_conditions_icon = '☁️';
+                    break;
+            } 
+        } else{
+            switch(weather.weather_conditions_id / 100){
+                case 2:
+                    weather_conditions_icon = '⛈';
+                    break;
+                case 3:
+                    weather_conditions_icon = '🌧';
+                    break;
+                case 5:
+                    weather_conditions_icon = '🌧';
+                    break;
+                case 6:
+                    weather_conditions_icon = '❄️';
+                    break;
+                case 7:
+                    weather_conditions_icon = '🌫';
+                    break;
+                default:
+                    weather_conditions_icon = '❗️'
+            }
+        }
+        let date = new Date();
+        let weather_date_today = date.getDate() + '.';
+        if(date.getMonth()<10){
+            weather_date_today += `0${date.getMonth()+1}`;
+        } else{
+            weather_date_today += date.getMonth()+1;
+        }
+        weather_date_today += '.' + date.getFullYear();
+
+daily_weather_message = `📍<b>${weather.city_name_language_ukrainian}!</b> ${personal_message}.
+${weather_conditions_icon}В даний момент на вулиці <i>${weather.temperature}°</i>, <i>${weather.weather_conditions_description}</i>.
+🌡Сьогодні, ${weather_date_today} максимум <i>${weather.temperature_max}°</i>, мінімум <i>${weather.temperature_min}°</i>. 
+🙌<i>Всім прекрасного дня!</i>`,{parse_mode:'HTML'}
+        bot.telegram.sendMessage(chat,daily_weather_message,{parse_mode:'HTML'});
     })
 }
 
