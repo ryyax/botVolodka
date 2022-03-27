@@ -4,7 +4,7 @@ const http = require('http');
 const { count } = require('console');
 const bot = new Telegraf(process.env.BOT_TOKEN); 
 
-// database(temporary)
+// database(temporary until i make the real database mazafaka)
 db = {
    
 }
@@ -145,6 +145,9 @@ bot.hears(/^Україна!?$/gi,ctx=>reply(ctx,'Понад усе!'))
 bot.hears(/^путін$/gi,ctx=>reply(ctx,'хуйло!'))
 bot.hears(/рускій ваєнний карабль/gi, ctx=>reply(ctx,'іді нахуй'))
 bot.hears(/Ы/gi, ctx=>reply(ctx,'Кажи слово паляниця!'))
+bot.hears(/процько/gi, ctx=>{
+    ctx.copyMessage().replace(/процько/gi, 'Хуй');
+})
 
 // bot on
 // bot.on('sticker', ctx => reply(ctx, 'заєбеш'))
