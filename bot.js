@@ -131,13 +131,13 @@ bot.hears('1000',ctx=>{
 })
 bot.hears('1000-7', ctx=>reply(ctx,'видно шо ти даун'));
 bot.hears(/^соля$/gi, ctx=>ctx.replyWithHTML(`<a href="tg://user?id=${s_mia_h}">Наймиліше створіннячко на планеті</a>`))
-bot.hears(/сам .* даун/gi, ctx=>{
-    if(ctx.message.chat.type === 'private'){
-        reply(ctx, 'була б це група я б лівнув');
-    } else {
-        ctx.leaveChat();
-    }
-});
+// bot.hears(/сам.*даун/gi, ctx=>{
+//     if(ctx.message.chat.type === 'private'){
+//         reply(ctx, 'була б це група я б лівнув');
+//     } else {
+//         ctx.leaveChat();
+//     }
+// });
 bot.hears(/((добр).*(ранку|ранок)|(день|дня)|(вечір|вечора)|(ночі))$/gi, ctx=>reply(ctx,'ми з України!'));
 bot.hears(/Слава Україні/gi, ctx=> reply(ctx,'Героям Слава!'))
 bot.hears(/Слава Нації/gi, ctx=>reply(ctx,'Смерть ворогам!'))
@@ -146,8 +146,9 @@ bot.hears(/^путін$/gi,ctx=>reply(ctx,'хуйло!'))
 bot.hears(/рускій ваєнний карабль/gi, ctx=>reply(ctx,'іді нахуй'))
 bot.hears(/Ы/gi, ctx=>reply(ctx,'Кажи слово паляниця!'))
 bot.hears(/процько/gi, ctx=>{
-    reply(ctx, ctx.copyMessage().replace(/процько/gi, 'Хуй'));
+    reply(ctx, ctx.message.text.replace(/процько/gi, 'хуй'))
 })
+bot.hears(/паляниця/gi, ctx=>ctx.replyWithVoice('AwACAgIAAxkBAAIDZ2JAer8F83BgHpcXSEY74oh73Va7AAJ4HAACjKPwSZOhMmPbVBVIIwQ'))
 
 // bot on
 // bot.on('sticker', ctx => reply(ctx, 'заєбеш'))
