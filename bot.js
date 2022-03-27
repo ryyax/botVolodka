@@ -146,7 +146,7 @@ bot.hears(/^путін$/gi,ctx=>reply(ctx,'хуйло!'))
 bot.hears(/рускій ваєнний карабль/gi, ctx=>reply(ctx,'іді нахуй'))
 bot.hears(/Ы/gi, ctx=>reply(ctx,'Кажи слово паляниця!'))
 bot.hears(/процько/gi, ctx=>{
-    ctx.copyMessage().replace(/процько/gi, 'Хуй');
+    reply(ctx, ctx.copyMessage().replace(/процько/gi, 'Хуй'));
 })
 
 // bot on
