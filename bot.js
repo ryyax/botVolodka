@@ -26,7 +26,7 @@ function reply(ctx,text){
 let onesixteen = function (){
     setInterval(()=>{
         let date = new Date();
-        if(date.getUTCHours() === 23 && date.getUTCMinutes() === 16){
+        if(date.getUTCHours() === 22 && date.getUTCMinutes() === 16){
             bot.telegram.sendMessage(chatpasta,'1:16');
         }
     }, 60000)
@@ -34,7 +34,7 @@ let onesixteen = function (){
 let morningAnnouncement = function(){
     setInterval(()=>{
         let date = new Date();
-        if(date.getUTCHours() === 7 && date.getUTCMinutes() === 0){
+        if(date.getUTCHours() === 6 && date.getUTCMinutes() === 0){
             bot.telegram.sendMessage(chatpasta,morningMessage(date),{parse_mode:'HTML'}) 
             daily_weather_lviv(chatpasta)           
         }
