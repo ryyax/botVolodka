@@ -207,6 +207,8 @@ bot.hears(/Слава Нації/gi, ctx=>reply(ctx,'Смерть ворогам
 bot.hears(/^Україна!?$/gi,ctx=>reply(ctx,'Понад усе!'))
 bot.hears(/^путін$/gi,ctx=>reply(ctx,'хуйло!'))
 bot.hears(/рускій ваєнний карабль/gi, ctx=>reply(ctx,'іді нахуй'))
+bot.hears(/батько наш Бандера/gi, ctx=>reply(ctx,'Україна мати!'))
+bot.hears(/ми за Україну/gi, ctx=>reply(ctx,'Підем воювати!'))
 bot.hears(/Ы/gi, ctx=>reply(ctx,'Кажи слово паляниця!'))
 bot.hears(/процько/gi, ctx=>{
     reply(ctx, ctx.message.text.replace(/процько/gi, 'хуй'))
