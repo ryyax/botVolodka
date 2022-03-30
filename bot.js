@@ -2,24 +2,30 @@ const {Telegraf} = require('telegraf')
 require('dotenv').config()
 const http = require('http');
 const { count } = require('console');
-const bot = new Telegraf(process.env.BOT_TOKEN); 
-
-// database(temporary until i make the real database mazafaka)
-db = {
-   
-}
+const bot = new Telegraf(process.env.BOT_TOKEN, {username: '@pasta_deadinside_bot'}); 
+const redis = require("redis");
+const client = redis.createClient({url: process.env.REDIS_URL});
 
 // chats
 const ryyax = 547015874;
 const s_mia_h = 681035579;
 const chatpasta = -1001517072456;
 
+// database(temporary until i make the real database mazafaka)
+db = {
+   
+}
+client.connect();
+
 // technical functions
 function sleep(ms){
     return new Promise(resolve=>setTimeout(resolve,ms));
 }
-function reply(ctx,text){
-    ctx.reply(text,{reply_to_message_id:ctx.message.message_id})
+function reply(ctx,text,extra = {}){
+    ctx.reply(text,{reply_to_message_id:ctx.message.message_id}, extra)
+}
+function notifyMe(text, extra = {}){
+    bot.telegram.sendMessage(ryyax, text, extra);
 }
 
 // functions
@@ -213,21 +219,94 @@ bot.hears(/Ы/gi, ctx=>reply(ctx,'Кажи слово паляниця!'))
 bot.hears(/процько/gi, ctx=>{
     reply(ctx, ctx.message.text.replace(/процько/gi, 'хуй'))
 })
-bot.hears(/паляниця/gi, ctx=>ctx.replyWithVoice('AwACAgIAAxkBAAIDZ2JAer8F83BgHpcXSEY74oh73Va7AAJ4HAACjKPwSZOhMmPbVBVIIwQ'))
-
-// bot on
-// bot.on('sticker', ctx => reply(ctx, 'заєбеш'))
-bot.on('voice', ctx => reply(ctx,'блять в тебе шо букви платні?'))
+// bot.hears(/паляниця/gi, ctx=>ctx.replyWithVoice('AwACAgIAAxkBAAIDZ2JAer8F83BgHpcXSEY74oh73Va7AAJ4HAACjKPwSZOhMmPbVBVIIwQ'))
 
 // bot commands
 bot.command('/weather', ctx=>{
     daily_weather_lviv(ctx.message.chat.id)
 })
+// let f = async function(){
+//     client.set('voice_message_list-1001576555232', 'паляниця,наруто');
+//     bot.telegram.sendMessage(-1001576555232, `<b>Patch note:</b>\n<b><i>HotFix 1.2</i></b>:\n-fixed case sensitivity(now it is case insensitive)\n-fixed bug with adding a voice message using /addvoice@bot_name if the name of the voice message already exists\n-not fixed toxic behavior of the bot`, {parse_mode:'HTML'})
+// }()
+bot.command('addvoice', async ctx=>{
+    let voice_message_name = ctx.message.text.replace(/\/addvoice.* /, '').toLowerCase();
+    let voice_message_list = [];
+    let voice_message_list_id = 'voice_message_list' + ctx.message.chat.id;
+    let promise = new Promise((resolve,reject)=>{
+        resolve(client.get(voice_message_list_id));
+    })
+    let voice_message_list_from_database = await promise;
+    if(voice_message_list_from_database){
+        voice_message_list = voice_message_list_from_database.split(',');
+    }
+    if(ctx.message.reply_to_message && voice_message_name != '/addvoice' && ctx.message.reply_to_message.voice){
+        if(!voice_message_list.includes(voice_message_name)){
+            client.set(ctx.message.chat.id.toString() + voice_message_name.toString(), ctx.message.reply_to_message.voice.file_id)
+            voice_message_list.push(voice_message_name);
+            console.log(voice_message_list);
+            client.set(voice_message_list_id,voice_message_list);
+            // reply(ctx, 'Голосове повідомлення успішно додано!')
+            reply(ctx, 'Валину свою забери. Голосовуха добавлена')
+            notifyMe(`added: ${voice_message_name} - ${ctx.message.reply_to_message.voice.file_id}\n to: ${voice_message_list_id} - ${voice_message_list}`)
+        } else{
+            // reply(ctx, 'Вже існує голосове повідомлення з такою назвою.')
+            reply(ctx, 'гайда включай фантазію і нову назву мені дай, таке вже є')
+        }
+    } else if(voice_message_name === '/addvoice'){
+        // reply(ctx, 'Вкажіть назву голосового повідомлення - "/addvoice *назва*"')
+        reply(ctx, '"/addvoice *назва*", назву дай бляха..')
+    } else if(!ctx.message.reply_to_message.voice){
+        // reply(ctx, 'Ви не відповідаєте на голосове повідомлення')
+        reply(ctx, 'це хіба голосове повідомлення? ну алло!')
+    } else {
+        // reply(ctx, 'Дай відповідь на голосове повідомлення, яке бажаєш зберегти') 
+        reply(ctx, 'я шо Ванга, шоб знати яке саме голосове ти хцеш добавити?...')
+    }
+})
+bot.command('voicelist', async (ctx)=>{
+    let voice_message_list_id = 'voice_message_list' + ctx.message.chat.id;
+    let promise = new Promise((resolve,reject)=>{
+        resolve(client.get(voice_message_list_id));
+    })
+    let voice_message_list = await promise;
+    if(voice_message_list){
+        ctx.reply(`Назви збережених голосових повідомлень в даному чаті: <b>${voice_message_list.replace(/,/gi,', ')}</b>`,{parse_mode:'HTML'})
+    } else{
+        reply(ctx, 'У вас не додано жодного голосового повідомлення. Скористайтесь командою /addvoice, для того, щоб добавити голосове повідомлення')
+    }
+})
+bot.command('delvoice', ctx=>{
+    reply(ctx, 'в розробці. деліт ше не завезли')
+})
+
+
 
 // test
 bot.hears('test',ctx=>{
     ctx.reply(ctx.message)
 })
+
+// bot on
+// bot.on('sticker', ctx => reply(ctx, 'заєбеш'))
+bot.on('voice', ctx => reply(ctx,'блять в тебе шо букви платні?'))
+bot.on('text', async ctx=>{
+    let promise = new Promise((resolve)=>{
+        resolve(client.get('voice_message_list' + ctx.message.chat.id))
+    })
+    let voice_message_list = await promise;
+    if(voice_message_list){
+        voice_message_list = voice_message_list.split(',');
+        if(voice_message_list.includes(ctx.message.text.toLowerCase())){
+            let promis = new Promise((resolve)=>{
+                resolve(client.get(ctx.message.chat.id.toString() + ctx.message.text.toString().toLowerCase()));
+            })
+            let voice_message_id = await promis;
+            ctx.replyWithVoice(voice_message_id);
+        }    
+    } 
+})
+
 
 
 bot.launch();   
