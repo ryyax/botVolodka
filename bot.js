@@ -279,6 +279,9 @@ bot.command('voicelist', async (ctx)=>{
 bot.command('delvoice', ctx=>{
     reply(ctx, 'в розробці. деліт ше не завезли')
 })
+bot.command('casino', ctx=>{
+    console.log(ctx.message)
+})
 
 
 
