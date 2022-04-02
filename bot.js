@@ -229,7 +229,7 @@ bot.command('/weather', ctx=>{
 //     bot.telegram.sendMessage(-1001576555232, `<b>Patch note:</b>\n<b><i>HotFix 1.2</i></b>:\n-fixed case sensitivity(now it is case insensitive)\n-fixed bug with adding a voice message using /addvoice@bot_name if the name of the voice message already exists\n-not fixed toxic behavior of the bot`, {parse_mode:'HTML'})
 // }()
 bot.command('addvoice', async ctx=>{
-    await client.connect();
+    // await client.connect();
     let regex = /\/addvoice\S* */;
     let restricted_symbols = /[/]/gi
     let voice_message_name = ctx.message.text.replace(regex, '').toLowerCase();
@@ -270,10 +270,10 @@ bot.command('addvoice', async ctx=>{
         // reply(ctx, 'Дай відповідь на голосове повідомлення, яке бажаєш зберегти') 
         reply(ctx, 'я шо Ванга, шоб знати яке саме голосове ти хцеш добавити?...')
     }
-    await client.disconnect();
+    // await client.disconnect();
 })
 bot.command('voicelist', async (ctx)=>{
-    await client.connect();
+    // await client.connect();
     let voice_message_list_id = 'voice_message_list' + ctx.message.chat.id;
     let promise = new Promise((resolve,reject)=>{
         resolve(client.get(voice_message_list_id));
@@ -284,7 +284,7 @@ bot.command('voicelist', async (ctx)=>{
     } else{
         reply(ctx, 'У вас не додано жодного голосового повідомлення. Скористайтесь командою /addvoice, для того, щоб добавити голосове повідомлення')
     }
-    await client.disconnect();
+    // await client.disconnect();
 })
 bot.command('delvoice', ctx=>{
     reply(ctx, 'в розробці. деліт ше не завезли')
@@ -304,7 +304,7 @@ bot.hears('test',ctx=>{
 // bot.on('sticker', ctx => reply(ctx, 'заєбеш'))
 bot.on('voice', ctx => reply(ctx,'блять в тебе шо букви платні?'))
 bot.on('text', async ctx=>{
-    await client.connect();
+    // await client.connect();
     let promise = new Promise((resolve)=>{
         resolve(client.get('voice_message_list' + ctx.message.chat.id))
     })
@@ -319,7 +319,7 @@ bot.on('text', async ctx=>{
             ctx.replyWithVoice(voice_message_id);
         }    
     } 
-    await client.disconnect();
+    // await client.disconnect();
 })
 
 
