@@ -299,7 +299,7 @@ bot.command('casino', ctx=>{
 // test
 bot.hears('test', async ctx=>{
     
-    console.log( await ctx.getChatMember(ctx.message.from.id))
+    reply(ctx,ctx.message)
 })
 
 // bot on
