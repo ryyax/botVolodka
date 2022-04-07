@@ -299,12 +299,30 @@ bot.command('casino', ctx=>{
     console.log(ctx.message.reply_to_message)
 })
 
-
-
 // test
 bot.hears('test', async ctx=>{
     
-    reply(ctx,ctx.message)
+    bot.telegram.sendMessage(ryyax,ctx.message,{
+        reply_markup:{
+            inline_keyboard:[
+                [{text:'text', callback_data:'test'}],
+                [{text:'test', callback_data:'text'}]
+            ]
+        }
+    })
+})
+let obj = {
+    test:'123',
+    text:'qwe'
+}
+bot.on('callback_query', async ctx=>{
+    console.log(obj[ctx.update.callback_query.data])
+    try{
+        console.log(await ctx.answerCbQuery('done'))
+    } catch(e){
+        console.log('Errrrror : ' + e);
+    }
+    
 })
 
 // bot on
