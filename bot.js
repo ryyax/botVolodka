@@ -248,7 +248,7 @@ bot.command('addvoice', async ctx=>{
     if(voice_message_list_from_database){
         voice_message_list = voice_message_list_from_database.split(',');
     }
-    if(ctx.message.reply_to_message && voice_message_name!='' && typeof(ctx.message.reply_to_message.voice) != 'undefined'){
+    if(ctx.message.reply_to_message && voice_message_name!='' && (typeof(ctx.message.reply_to_message.voice) != 'undefined' || typeof(ctx.message.reply_to_message.audio) != 'undefined' )){
         if(!voice_message_list.includes(voice_message_name)){
             client.set(ctx.message.chat.id.toString() + voice_message_name.toString(), ctx.message.reply_to_message.voice.file_id)
             voice_message_list.push(voice_message_name);
