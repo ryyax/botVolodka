@@ -250,7 +250,12 @@ bot.command('addvoice', async ctx=>{
     }
     if(ctx.message.reply_to_message && voice_message_name!='' && (typeof(ctx.message.reply_to_message.voice) != 'undefined' || typeof(ctx.message.reply_to_message.audio) != 'undefined' )){
         if(!voice_message_list.includes(voice_message_name)){
-            client.set(ctx.message.chat.id.toString() + voice_message_name.toString(), ctx.message.reply_to_message.voice.file_id)
+            if(typeof(ctx.message.reply_to_message.voice) != 'undefined'){
+                client.set(ctx.message.chat.id.toString() + voice_message_name.toString(), ctx.message.reply_to_message.voice.file_id)
+            }
+            if(typeof(ctx.message.reply_to_message.audio) != 'undefined'){
+                client.set(ctx.message.chat.id.toString() + voice_message_name.toString(), ctx.message.reply_to_message.audio.file_id)
+            }
             voice_message_list.push(voice_message_name);
             console.log(voice_message_list);
             client.set(voice_message_list_id,voice_message_list);
